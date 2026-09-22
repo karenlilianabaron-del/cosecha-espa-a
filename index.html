@@ -109,5 +109,11 @@ async function apply(id){let u=await me();if(!u){let a=JSON.parse(localStorage.g
 async function createCampaign(){let u=await me();if(!u)return alert('Inicia sesión como empresa.');let payload={employer_id:u.id,title:title.value,crop:ccrop.value,province:cprovince.value,municipality:municipality.value,start_date:start.value,end_date:end.value,salary_text:salary.value,workers_needed:Number(workers.value||1),accommodation:accommodation.checked,description:description.value,status:'published'};let {error}=await client.from('campaigns').insert(payload);alert(error?error.message:'Campaña publicada online.')} 
 async function loadCandidates(){
 let u=await me();
+if(!u)return alert('Inicia sesión como empresa.');
+const {data,error}=await client.from('applications').select('*');
+if(error)return alert(error.message);
+const box=document.getElementById('candidatesList');
+if(!data.length){box.innerHTML='<p>No tienes candidatos todavía.</p>';return;}
+box.innerHTML=data.map(a=><div class="campaign"><b>Candidato</b><br>Estado: ${a.status}<br>Trabajador: ${a.worker_id}</div>).join('');
 }
 </script></body></html>
