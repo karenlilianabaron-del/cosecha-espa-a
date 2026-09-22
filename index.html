@@ -31,9 +31,9 @@ input,select,textarea{width:100%;padding:11px;border:1px solid #d4ded8;border-ra
 <section id="home"><div class="card"><h2>Bienvenida</h2><p>0.9 añade conexión preparada con Supabase Auth y PostgreSQL. Sin configuración de credenciales, la app continúa en modo demo.</p><button class="btn alt" onclick="view('search',document.querySelectorAll('.tab')[1])">BUSCAR CAMPAÑAS</button></div></section>
 
 <section id="auth" class="hidden"><div class="card"><h2>Cuenta</h2>
-<div class="grid"><div><label>Email</label><input id="email" type="email"></div><div><label>Contraseña</label><input id="password" type="password"></div></div>
+<div class="grid"><div><label>Email</label><input id="email" type="email"></div><div><label>Contraseña</label><input id="password" type="password"><labelconfirmar contraseña>/label><inpud id="password2"type="password"></div></div>
 <select id="role"><option value="worker">Trabajador</option><option value="employer">Empresa</option></select>
-<button class="btn" onclick="signup()">CREAR CUENTA</button> <button class="btn alt" onclick="login()">INICIAR SESIÓN</button>
+<button class="btn" onclick="signup()">CREAR CUENTA</button> <button class="btn alt" onclick="login()">INICIAR SESIÓN</button> <button class="btn" onclick="forgotPassword()">¿OLVIDASTE TU CONTRASEÑA?</button>  <button class="btn alt" onclick="login()">INICIAR SESIÓN</button>
 <button class="btn" onclick="logout()">CERRAR SESIÓN</button><p class="small">La autenticación real se activa al introducir URL y clave pública de Supabase en <code>config.js</code>.</p></div></section>
 
 <section id="search" class="hidden"><div class="card"><h2>Campañas</h2>
@@ -65,8 +65,9 @@ input,select,textarea{width:100%;padding:11px;border:1px solid #d4ded8;border-ra
 let client=null, demoApps=JSON.parse(localStorage.getItem('ce09_apps')||'[]');
 if(window.CE_CONFIG?.url && window.CE_CONFIG?.anonKey){client=window.supabase.createClient(CE_CONFIG.url,CE_CONFIG.anonKey);document.getElementById('status').textContent='Supabase configurado';}
 function view(id,btn){document.querySelectorAll('main>section').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');if(id==='search')loadCampaigns();if(id==='apps')loadApplications()}
-async function signup(){if(!client)return alert('Configura Supabase primero.');const {data,error}=await client.auth.signUp({email:email.value,password:password.value,options:{data:{role:role.value}}});alert(error?error.message:'Cuenta creada. Revisa tu correo si la confirmación está activada.')}
+async function signup(){if(!client)return alert('Configura Supabase primero.');if(password.value!==password2.value)return alert('Las contraseñas no coinciden.');if(password.value.length<6)return alert('La contraseña debe tener al menos 6 caracteres.');const {data,error}=await client.auth.signUp({email:email.value,password:password.value,options:{data:{role:role.value}}});alert(error?error.message:'Cuenta creada. Revisa tu correo para confirmar tu cuenta.')}
 async function login(){if(!client)return alert('Configura Supabase primero.');const {error}=await client.auth.signInWithPassword({email:email.value,password:password.value});alert(error?error.message:'Sesión iniciada');}
+async function forgotPassword(){if(!client)return alert('Configura Supabase primero.');if(!email.value)return alert('Escribe tu correo electrónico.');const {error}=await client.auth.resetPasswordForEmail(email.value);alert(error?error.message:'Te enviamos un correo para restablecer tu contraseña.')}
 async function logout(){if(client)await client.auth.signOut();alert('Sesión cerrada')}
 async function me(){if(!client)return null;const {data:{user}}=await client.auth.getUser();return user}
 async function saveProfile(){let u=await me();if(!u)return alert('Inicia sesión primero.');const {error}=await client.from('profiles').update({full_name:name.value,crops:pcrops.value.split(',').map(x=>x.trim()).filter(Boolean),availability_start:from.value||null,availability_end:to.value||null,has_vehicle:vehicle.checked,needs_accommodation:needhouse.checked,updated_at:new Date().toISOString()}).eq('id',u.id);alert(error?error.message:'Perfil guardado online.')}
