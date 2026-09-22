@@ -25,6 +25,7 @@ input,select,textarea{width:100%;padding:11px;border:1px solid #d4ded8;border-ra
 <button class="tab" onclick="view('profile',this)">Perfil</button>
 <button class="tab" onclick="view('publish',this)">Publicar</button>
 <button class="tab" onclick="view('apps',this)">Mis postulaciones</button>
+<button class="tab" onclick="view('candidates',this);loadCandidates()">Candidatos</button>
 <button class="tab" onclick="view('chat',this)">Chat</button>
 </nav>
 <button class="btn" onclick="view('auth',this)">INICIAR SESIÓN / CREAR CUENTA</button>
@@ -84,6 +85,7 @@ input,select,textarea{width:100%;padding:11px;border:1px solid #d4ded8;border-ra
 <button class="btn alt" onclick="createCampaign()">PUBLICAR ONLINE</button></div></section>
 
 <section id="apps" class="hidden"><div class="card"><h2>Mis postulaciones</h2><div id="applications"></div></div></section>
+<section id="candidates" class="hidden"><div class="card"><h2>Candidatos recibidos</h2><div id="candidatesList"></div></div></section>
 <section id="chat" class="hidden"><div class="card"><h2>💬 Chat</h2><p class="small">Selecciona una candidatura para iniciar conversación. Realtime se activa al conectar Supabase.</p><div id="chatbox"></div></div></section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -106,4 +108,5 @@ let q=client.from('campaigns').select('*').eq('status','published').order('start
 async function apply(id){let u=await me();if(!u){let a=JSON.parse(localStorage.getItem('ce09_apps')||'[]');if(!a.includes(id))a.push(id);localStorage.setItem('ce09_apps',JSON.stringify(a));return alert('Postulación guardada en demo.');}let {error}=await client.from('applications').insert({campaign_id:id,worker_id:u.id});alert(error?error.message:'Postulación enviada.')}
 async function createCampaign(){let u=await me();if(!u)return alert('Inicia sesión como empresa.');let payload={employer_id:u.id,title:title.value,crop:ccrop.value,province:cprovince.value,municipality:municipality.value,start_date:start.value,end_date:end.value,salary_text:salary.value,workers_needed:Number(workers.value||1),accommodation:accommodation.checked,description:description.value,status:'published'};let {error}=await client.from('campaigns').insert(payload);alert(error?error.message:'Campaña publicada online.')}
 async function loadApplications(){if(!client){document.getElementById('applications').textContent='Modo demo. Conecta Supabase para ver candidaturas reales.';return}let u=await me();if(!u)return document.getElementById('applications').textContent='Inicia sesión.';let {data,error}=await client.from('applications').select('id,status,created_at,campaigns(title,crop,province)').eq('worker_id',u.id).order('created_at',{ascending:false});document.getElementById('applications').innerHTML=error?error.message:(data||[]).map(a=>`<div class="campaign"><b>${a.campaigns?.title||'Campaña'}</b><br>${a.campaigns?.crop||''} · ${a.campaigns?.province||''}<br>Estado: ${a.status}</div>`).join('')||'No tienes postulaciones.'}
+  async function loadCandidates(){let u=await me();if(!u)return alert('Inicia sesión como empresa.');const {data,error}=await client.from('applications').select('id,status,worker_id,campaigns!inner(title,employer_id)').eq('campaigns.employer_id',u.id).order('created_at',{ascending:false});if(error)return alert(error.message);const box=document.getElementById('candidatesList');box.innerHTML=data.length?data.map(a=><div class="campaign"><b>${a.campaigns.title}</b><br>Trabajador: ${a.worker_id}<br>Estado: ${a.status}</div>).join(''):'No tienes candidatos todavía.';}
 </script></body></html>
