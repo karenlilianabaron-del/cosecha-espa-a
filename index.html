@@ -30,12 +30,37 @@ input,select,textarea{width:100%;padding:11px;border:1px solid #d4ded8;border-ra
 <button class="btn" onclick="view('auth',this)">INICIAR SESIÓN / CREAR CUENTA</button>
 <section id="home"><div class="card"><h2>Bienvenida</h2><p>0.9 añade conexión preparada con Supabase Auth y PostgreSQL. Sin configuración de credenciales, la app continúa en modo demo.</p><button class="btn alt" onclick="view('search',document.querySelectorAll('.tab')[1])">BUSCAR CAMPAÑAS</button></div></section>
 
-<section id="auth" class="hidden"><div class="card"><h2>Cuenta</h2>
-<div><label>Confirmar contraseña</label><input id="password2" type="password"></div>
-<div class="grid"><div><label>Email</label><input id="email" type="email"></div><div><label>Contraseña</label><input id="password" type="password"><labelconfirmar contraseña>/label><inpud id="password2"type="password"></div></div>
-<select id="role"><option value="worker">Trabajador</option><option value="employer">Empresa</option></select>
-<button class="btn" onclick="signup()">CREAR CUENTA</button> <button class="btn alt" onclick="login()">INICIAR SESIÓN</button> <button class="btn" onclick="forgotPassword()">¿OLVIDASTE TU CONTRASEÑA?</button>  <button class="btn alt" onclick="login()">INICIAR SESIÓN</button>
-<button class="btn" onclick="logout()">CERRAR SESIÓN</button><p class="small">La autenticación real se activa al introducir URL y clave pública de Supabase en <code>config.js</code>.</p></div></section>
+<section id="auth" class="hidden">
+  <div class="card">
+    <h2>Cuenta</h2>
+
+    <div class="grid">
+      <div>
+        <label>Email</label>
+        <input id="email" type="email">
+      </div>
+      <div>
+        <label>Contraseña</label>
+        <input id="password" type="password">
+      </div>
+    </div>
+
+    <div>
+      <label>Confirmar contraseña</label>
+      <input id="password2" type="password">
+    </div>
+
+    <select id="role">
+      <option value="worker">Trabajador</option>
+      <option value="employer">Empresa</option>
+    </select>
+
+    <button class="btn" onclick="signup()">CREAR CUENTA</button>
+    <button class="btn alt" onclick="login()">INICIAR SESIÓN</button>
+    <button class="btn" onclick="forgotPassword()">¿OLVIDASTE TU CONTRASEÑA?</button>
+    <button class="btn" onclick="logout()">CERRAR SESIÓN</button>
+  </div>
+</section>
 
 <section id="search" class="hidden"><div class="card"><h2>Campañas</h2>
 <div class="grid"><input id="crop" placeholder="Cultivo"><input id="province" placeholder="Provincia"></div>
