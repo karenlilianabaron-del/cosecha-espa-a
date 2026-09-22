@@ -31,6 +31,7 @@ input,select,textarea{width:100%;padding:11px;border:1px solid #d4ded8;border-ra
 <section id="home"><div class="card"><h2>Bienvenida</h2><p>0.9 añade conexión preparada con Supabase Auth y PostgreSQL. Sin configuración de credenciales, la app continúa en modo demo.</p><button class="btn alt" onclick="view('search',document.querySelectorAll('.tab')[1])">BUSCAR CAMPAÑAS</button></div></section>
 
 <section id="auth" class="hidden"><div class="card"><h2>Cuenta</h2>
+<div><label>Confirmar contraseña</label><input id="password2" type="password"></div>
 <div class="grid"><div><label>Email</label><input id="email" type="email"></div><div><label>Contraseña</label><input id="password" type="password"><labelconfirmar contraseña>/label><inpud id="password2"type="password"></div></div>
 <select id="role"><option value="worker">Trabajador</option><option value="employer">Empresa</option></select>
 <button class="btn" onclick="signup()">CREAR CUENTA</button> <button class="btn alt" onclick="login()">INICIAR SESIÓN</button> <button class="btn" onclick="forgotPassword()">¿OLVIDASTE TU CONTRASEÑA?</button>  <button class="btn alt" onclick="login()">INICIAR SESIÓN</button>
