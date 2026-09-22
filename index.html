@@ -59,6 +59,7 @@ input,select,textarea{width:100%;padding:11px;border:1px solid #d4ded8;border-ra
     <button class="btn" onclick="signup()">CREAR CUENTA</button>
     <button class="btn alt" onclick="login()">INICIAR SESIÓN</button>
     <button class="btn" onclick="forgotPassword()">¿OLVIDASTE TU CONTRASEÑA?</button>
+   <button class="btn" onclick="changePassword()">CAMBIAR CONTRASEÑA</button> 
     <button class="btn" onclick="logout()">CERRAR SESIÓN</button>
   </div>
   </section> 
@@ -94,6 +95,7 @@ function view(id,btn){document.querySelectorAll('main>section').forEach(x=>x.cla
 async function signup(){if(!client)return alert('Configura Supabase primero.');if(password.value!==password2.value)return alert('Las contraseñas no coinciden.');if(password.value.length<6)return alert('La contraseña debe tener al menos 6 caracteres.');const {data,error}=await client.auth.signUp({email:email.value,password:password.value,options:{data:{role:role.value}}});alert(error?error.message:'Cuenta creada. Revisa tu correo para confirmar tu cuenta.')}
 async function login(){if(!client)return alert('Configura Supabase primero.');const {error}=await client.auth.signInWithPassword({email:email.value,password:password.value});alert(error?error.message:'Sesión iniciada');}
 async function forgotPassword(){if(!client)return alert('Configura Supabase primero.');if(!email.value)return alert('Escribe tu email.');const {error}=await client.auth.resetPasswordForEmail(email.value,{redirectTo:'https://karenlilianabaron-del.github.io/cosecha-espa-a/'});alert(error?error.message:'Te enviamos un correo para restablecer tu contraseña.')}
+async function changePassword(){if(!client)return alert('Configura Supabase primero.');if(!password.value)return alert('Escribe la nueva contraseña.');if(password.value!==password2.value)return alert('Las contraseñas no coinciden.');if(password.value.length<6)return alert('La contraseña debe tener al menos 6 caracteres.');const {error}=await client.auth.updateUser({password:password.value});alert(error?error.message:'Contraseña cambiada correctamente.')}
 async function logout(){if(client)await client.auth.signOut();alert('Sesión cerrada')}
 async function me(){if(!client)return null;const {data:{user}}=await client.auth.getUser();return user}
 async function saveProfile(){let u=await me();if(!u)return alert('Inicia sesión primero.');const {error}=await client.from('profiles').update({full_name:name.value,crops:pcrops.value.split(',').map(x=>x.trim()).filter(Boolean),availability_start:from.value||null,availability_end:to.value||null,has_vehicle:vehicle.checked,needs_accommodation:needhouse.checked,updated_at:new Date().toISOString()}).eq('id',u.id);alert(error?error.message:'Perfil guardado online.')}
