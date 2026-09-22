@@ -30,7 +30,8 @@ input,select,textarea{width:100%;padding:11px;border:1px solid #d4ded8;border-ra
 <button class="btn" onclick="view('auth',this)">INICIAR SESIÓN / CREAR CUENTA</button>
 <section id="home"><div class="card"><h2>Bienvenida</h2><p>0.9 añade conexión preparada con Supabase Auth y PostgreSQL. Sin configuración de credenciales, la app continúa en modo demo.</p><button class="btn alt" onclick="view('search',document.querySelectorAll('.tab')[1])">BUSCAR CAMPAÑAS</button></div></section>
 
-<section id="auth" class="hidden">
+<p class="small">Crea tu cuenta o inicia sesión para acceder a Cosecha España.</p>
+  <section id="auth" class="hidden">
   <div class="card">
     <h2>Cuenta</h2>
 
@@ -60,7 +61,7 @@ input,select,textarea{width:100%;padding:11px;border:1px solid #d4ded8;border-ra
     <button class="btn" onclick="forgotPassword()">¿OLVIDASTE TU CONTRASEÑA?</button>
     <button class="btn" onclick="logout()">CERRAR SESIÓN</button>
   </div>
-</section>
+ 
 
 <section id="search" class="hidden"><div class="card"><h2>Campañas</h2>
 <div class="grid"><input id="crop" placeholder="Cultivo"><input id="province" placeholder="Provincia"></div>
