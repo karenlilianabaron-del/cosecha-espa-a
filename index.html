@@ -110,7 +110,7 @@ async function createCampaign(){let u=await me();if(!u)return alert('Inicia sesi
 async function loadCandidates(){
 let u=await me();
 if(!u)return alert('Inicia sesión como empresa.');
-const {data,error}=await client.from('applications').select('*');
+const {data,error}=await client.from('applications').select('*').eq('worker_id',u.id);
 if(error)return alert(error.message);
 const box=document.getElementById('candidatesList');
 if(!data.length){box.innerHTML='<p>No tienes candidatos todavía.</p>';return;}
