@@ -1,12 +1,78 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cosecha España</title>
-</head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cosecha España 0.9</title>
+<style>
+:root{--g:#176b45;--o:#f39a21;--c:#fffaf0;--i:#17352a}*{box-sizing:border-box}
+body{margin:0;background:var(--c);color:var(--i);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:var(--g);color:#fff;padding:20px}header h1{margin:0}main{max-width:1000px;margin:auto;padding:18px}
+.card{background:#fff;border-radius:18px;padding:18px;margin-bottom:18px;box-shadow:0 5px 22px #17352a14}
+nav{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px}.tab{border:0;padding:10px 12px;border-radius:10px;background:#eaf3ed;color:var(--g);font-weight:700}.active{background:var(--g);color:#fff}
+input,select,textarea{width:100%;padding:11px;border:1px solid #d4ded8;border-radius:10px;margin:5px 0 10px}textarea{min-height:85px}
+.btn{border:0;border-radius:11px;padding:11px 15px;background:var(--g);color:#fff;font-weight:700;cursor:pointer}.alt{background:var(--o);color:var(--i)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hidden{display:none}.campaign{border:1px solid #e0e8e3;border-radius:14px;padding:14px;margin:10px 0}.small{font-size:13px;color:#617068}
+#status{font-size:13px;padding:7px 10px;border-radius:20px;background:#edf5f0;display:inline-block}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+</style></head>
 <body>
-  <h1>🌱 Cosecha España</h1>
-  <p>Encuentra tu próxima campaña. Trabaja donde haya cosecha.</p>
-</body>
-</html>
+<header><h1>🌱 COSECHA ESPAÑA</h1><p>Encuentra tu próxima campaña. Trabaja donde haya cosecha.</p></header>
+<main>
+<div class="card"><span id="status">Modo demo</span></div>
+<nav>
+<button class="tab active" onclick="view('home',this)">Inicio</button>
+<button class="tab" onclick="view('search',this)">Buscar</button>
+<button class="tab" onclick="view('profile',this)">Perfil</button>
+<button class="tab" onclick="view('publish',this)">Publicar</button>
+<button class="tab" onclick="view('apps',this)">Mis postulaciones</button>
+<button class="tab" onclick="view('chat',this)">Chat</button>
+</nav>
+
+<section id="home"><div class="card"><h2>Bienvenida</h2><p>0.9 añade conexión preparada con Supabase Auth y PostgreSQL. Sin configuración de credenciales, la app continúa en modo demo.</p><button class="btn alt" onclick="view('search',document.querySelectorAll('.tab')[1])">BUSCAR CAMPAÑAS</button></div></section>
+
+<section id="auth" class="hidden"><div class="card"><h2>Cuenta</h2>
+<div class="grid"><div><label>Email</label><input id="email" type="email"></div><div><label>Contraseña</label><input id="password" type="password"></div></div>
+<select id="role"><option value="worker">Trabajador</option><option value="employer">Empresa</option></select>
+<button class="btn" onclick="signup()">CREAR CUENTA</button> <button class="btn alt" onclick="login()">INICIAR SESIÓN</button>
+<button class="btn" onclick="logout()">CERRAR SESIÓN</button><p class="small">La autenticación real se activa al introducir URL y clave pública de Supabase en <code>config.js</code>.</p></div></section>
+
+<section id="search" class="hidden"><div class="card"><h2>Campañas</h2>
+<div class="grid"><input id="crop" placeholder="Cultivo"><input id="province" placeholder="Provincia"></div>
+<label><input id="housing" type="checkbox" style="width:auto"> Con alojamiento</label><br>
+<button class="btn" onclick="loadCampaigns()">BUSCAR</button><div id="campaigns"></div></div></section>
+
+<section id="profile" class="hidden"><div class="card"><h2>Mi perfil</h2>
+<input id="name" placeholder="Nombre completo"><input id="pcrops" placeholder="Cultivos y experiencia">
+<div class="grid"><input id="from" type="date"><input id="to" type="date"></div>
+<label><input id="vehicle" type="checkbox" style="width:auto"> Tengo vehículo</label>
+<label><input id="needhouse" type="checkbox" style="width:auto"> Necesito alojamiento</label><br>
+<button class="btn" onclick="saveProfile()">GUARDAR PERFIL ONLINE</button></div></section>
+
+<section id="publish" class="hidden"><div class="card"><h2>Publicar campaña</h2>
+<input id="title" placeholder="Título de la campaña"><div class="grid"><input id="ccrop" placeholder="Cultivo"><input id="cprovince" placeholder="Provincia"></div>
+<input id="municipality" placeholder="Municipio"><div class="grid"><input id="start" type="date"><input id="end" type="date"></div>
+<div class="grid"><input id="salary" placeholder="Salario/condiciones"><input id="workers" type="number" placeholder="Trabajadores"></div>
+<label><input id="accommodation" type="checkbox" style="width:auto"> Ofrecemos alojamiento</label>
+<textarea id="description" placeholder="Descripción y requisitos"></textarea>
+<button class="btn alt" onclick="createCampaign()">PUBLICAR ONLINE</button></div></section>
+
+<section id="apps" class="hidden"><div class="card"><h2>Mis postulaciones</h2><div id="applications"></div></div></section>
+<section id="chat" class="hidden"><div class="card"><h2>💬 Chat</h2><p class="small">Selecciona una candidatura para iniciar conversación. Realtime se activa al conectar Supabase.</p><div id="chatbox"></div></div></section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+let client=null, demoApps=JSON.parse(localStorage.getItem('ce09_apps')||'[]');
+if(window.CE_CONFIG?.url && window.CE_CONFIG?.anonKey){client=window.supabase.createClient(CE_CONFIG.url,CE_CONFIG.anonKey);document.getElementById('status').textContent='Supabase configurado';}
+function view(id,btn){document.querySelectorAll('main>section').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');if(id==='search')loadCampaigns();if(id==='apps')loadApplications()}
+async function signup(){if(!client)return alert('Configura Supabase primero.');const {data,error}=await client.auth.signUp({email:email.value,password:password.value,options:{data:{role:role.value}}});alert(error?error.message:'Cuenta creada. Revisa tu correo si la confirmación está activada.')}
+async function login(){if(!client)return alert('Configura Supabase primero.');const {error}=await client.auth.signInWithPassword({email:email.value,password:password.value});alert(error?error.message:'Sesión iniciada');}
+async function logout(){if(client)await client.auth.signOut();alert('Sesión cerrada')}
+async function me(){if(!client)return null;const {data:{user}}=await client.auth.getUser();return user}
+async function saveProfile(){let u=await me();if(!u)return alert('Inicia sesión primero.');const {error}=await client.from('profiles').update({full_name:name.value,crops:pcrops.value.split(',').map(x=>x.trim()).filter(Boolean),availability_start:from.value||null,availability_end:to.value||null,has_vehicle:vehicle.checked,needs_accommodation:needhouse.checked,updated_at:new Date().toISOString()}).eq('id',u.id);alert(error?error.message:'Perfil guardado online.')}
+async function loadCampaigns(){if(!client){document.getElementById('campaigns').innerHTML='<div class="campaign">Modo demo: configura Supabase para cargar campañas reales.</div>';return}
+let q=client.from('campaigns').select('*').eq('status','published').order('start_date');if(crop.value)q=q.ilike('crop','%'+crop.value+'%');if(province.value)q=q.ilike('province','%'+province.value+'%');if(housing.checked)q=q.eq('accommodation',true);let {data,error}=await q;document.getElementById('campaigns').innerHTML=error?error.message:(data||[]).map(c=>`<div class="campaign"><b>${c.title}</b><br>🌾 ${c.crop} · 📍 ${c.municipality||''}, ${c.province||''}<br>📅 ${c.start_date} → ${c.end_date}<br>🏠 ${c.accommodation?'Sí':'No'} · 👷 ${c.workers_needed||1}<br><button class="btn" onclick="apply('${c.id}')">POSTULARME</button></div>`).join('')||'No hay campañas.'}
+async function apply(id){let u=await me();if(!u){let a=JSON.parse(localStorage.getItem('ce09_apps')||'[]');if(!a.includes(id))a.push(id);localStorage.setItem('ce09_apps',JSON.stringify(a));return alert('Postulación guardada en demo.');}let {error}=await client.from('applications').insert({campaign_id:id,worker_id:u.id});alert(error?error.message:'Postulación enviada.')}
+async function createCampaign(){let u=await me();if(!u)return alert('Inicia sesión como empresa.');let payload={employer_id:u.id,title:title.value,crop:ccrop.value,province:cprovince.value,municipality:municipality.value,start_date:start.value,end_date:end.value,salary_text:salary.value,workers_needed:Number(workers.value||1),accommodation:accommodation.checked,description:description.value,status:'published'};let {error}=await client.from('campaigns').insert(payload);alert(error?error.message:'Campaña publicada online.')}
+async function loadApplications(){if(!client){document.getElementById('applications').textContent='Modo demo. Conecta Supabase para ver candidaturas reales.';return}let u=await me();if(!u)return document.getElementById('applications').textContent='Inicia sesión.';let {data,error}=await client.from('applications').select('id,status,created_at,campaigns(title,crop,province)').eq('worker_id',u.id).order('created_at',{ascending:false});document.getElementById('applications').innerHTML=error?error.message:(data||[]).map(a=>`<div class="campaign"><b>${a.campaigns?.title||'Campaña'}</b><br>${a.campaigns?.crop||''} · ${a.campaigns?.province||''}<br>Estado: ${a.status}</div>`).join('')||'No tienes postulaciones.'}
+</script></body></html>
