@@ -21,12 +21,12 @@ input,select,textarea{width:100%;padding:11px;border:1px solid #d4ded8;border-ra
 <div class="card"><span id="status">Modo demo</span></div>
 <nav>
 <button class="tab active" onclick="view('home',this)">Inicio</button>
-<button class="tab" onclick="view('search',this)">Buscar</button>
-<button class="tab" onclick="view('profile',this)">Perfil</button>
+<button id="navSearch" class="tab" onclick="view('search',this)">Buscar</button>
+<button id="navProfile" class="tab" onclick="view('profile',this)">Perfil</button>
 <button id="navPublish" class="tab" onclick="view('publish',this)">Publicar</button>
 <button id="navApplications" class="tab" onclick="view('apps',this);loadApplications()">Mis postulaciones</button>
 <button id="navCandidates" class="tab" onclick="view('candidates',this);loadCandidatesV2()">Candidatos</button>
-<button class="tab" onclick="view('chat',this)">Chat</button>
+<button id="navChat" class="tab" onclick="view('chat',this)">Chat</button>
 </nav>
 <button id="authButton" class="btn" onclick="view('auth',this)">INICIAR SESIÓN / CREAR CUENTA</button>
 <button id="topLogoutButton" class="btn" onclick="logout()" style="display:none">CERRAR SESIÓN</button>
@@ -62,8 +62,8 @@ input,select,textarea{width:100%;padding:11px;border:1px solid #d4ded8;border-ra
     <button class="btn" onclick="signup()">CREAR CUENTA</button>
     <button class="btn alt" onclick="login()">INICIAR SESIÓN</button>
     <button class="btn" onclick="forgotPassword()">¿OLVIDASTE TU CONTRASEÑA?</button>
-   <button class="btn" onclick="changePassword()">CAMBIAR CONTRASEÑA</button> 
-   <button id="logoutButton" class="btn" onclick="logout()">CERRAR SESIÓN</button>
+   <button id="changePasswordButton" class="btn" onclick="changePassword()">CAMBIAR CONTRASEÑA</button>
+  
   </div>
   </section> 
 <section id="search" class="hidden"><div class="card"><h2>Campañas</h2>
@@ -118,7 +118,7 @@ async function openChat(campaignId){let u=await me();if(!u)return alert('Inicia 
 async function loadMessages(){if(!currentConversationId)return;let {data:msgs,error}=await client.from('messages').select('*').eq('conversation_id',currentConversationId).order('created_at',{ascending:true});if(error)return alert('Error al cargar mensajes: '+error.message);let box=document.getElementById('chatMessages');box.innerHTML=msgs&&msgs.length?msgs.map(m=>'<p><b>'+m.body+'</b></p>').join(''):'<p class="small">Todavía no hay mensajes. Escribe el primero.</p>';}  
 async function sendMessage(){let u=await me();if(!u)return alert('Inicia sesión primero.');if(!currentConversationId)return alert('Abre una conversación primero.');let input=document.getElementById('chatText');let text=input.value.trim();if(!text)return alert('Escribe un mensaje.');let {error}=await client.from('messages').insert({conversation_id:currentConversationId,sender_id:u.id,body:text});if(error)return alert('Error al enviar mensaje: '+error.message);input.value='';loadMessages();}
 async function openEmployerChat(campaignId,workerId){let u=await me();if(!u)return alert('Inicia sesión primero.');let {data:conv,error}=await client.from('conversations').select('id').eq('campaign_id',campaignId).eq('worker_id',workerId).eq('employer_id',u.id).maybeSingle();if(error)return alert('Error al buscar conversación: '+error.message);if(!conv)return alert('El trabajador todavía no ha iniciado esta conversación.');currentConversationId=conv.id;document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'));document.getElementById('chat').classList.remove('hidden');loadMessages();}
-async function applyRoleAccess(){let u=await me();if(!u)return;let {data:p,error}=await client.from('profiles').select('role').eq('id',u.id).single();if(error)return alert('Error al cargar tipo de cuenta: '+error.message);let isWorker=p.role==='worker';document.getElementById('navPublish').style.display=isWorker?'none':'';document.getElementById('navCandidates').style.display=isWorker?'none':'';document.getElementById('navApplications').style.display=isWorker?'':'none';document.getElementById('authButton').style.display='none';document.getElementById('authMessage').style.display='none';document.getElementById('topLogoutButton').style.display='';}
-async function restoreSession(){if(!client)return;const {data:{session}}=await client.auth.getSession();if(session){await applyRoleAccess();}else{document.getElementById('navPublish').style.display='none';document.getElementById('navApplications').style.display='none';document.getElementById('navCandidates').style.display='none';}}
+async function applyRoleAccess(){let u=await me();if(!u)return;let {data:p,error}=await client.from('profiles').select('role').eq('id',u.id).single();if(error)return alert('Error al cargar tipo de cuenta: '+error.message);let isWorker=p.role==='worker';document.getElementById('navSearch').style.display='';document.getElementById('navProfile').style.display='';document.getElementById('navChat').style.display='';document.getElementById('navPublish').style.display=isWorker?'none':'';document.getElementById('navCandidates').style.display=isWorker?'none':'';document.getElementById('navApplications').style.display=isWorker?'':'none';document.getElementById('authButton').style.display='none';document.getElementById('authMessage').style.display='none';document.getElementById('topLogoutButton').style.display='';document.getElementById('changePasswordButton').style.display='';}
+async function restoreSession(){if(!client)return;const {data:{session}}=await client.auth.getSession();if(session){await applyRoleAccess();}else{document.getElementById('navSearch').style.display='none';document.getElementById('navProfile').style.display='none';document.getElementById('navPublish').style.display='none';document.getElementById('navApplications').style.display='none';document.getElementById('navCandidates').style.display='none';document.getElementById('navChat').style.display='none';document.getElementById('changePasswordButton').style.display='none';}}
 restoreSession();
 </script></body></html>
