@@ -86,7 +86,7 @@ input,select,textarea{width:100%;padding:11px;border:1px solid #d4ded8;border-ra
 
 <section id="apps" class="hidden"><div class="card"><h2>Mis postulaciones</h2><div id="applications"></div></div></section>
 <section id="candidates" class="hidden"><div class="card"><h2>Candidatos recibidos</h2><div id="candidatesList"></div></div></section>
-<section id="chat" class="hidden"><div class="card"><h2>💬 Chat</h2><p class="small">Selecciona una candidatura para iniciar conversación. Realtime se activa al conectar Supabase.</p><div id="chatbox"></div></div></section>
+<section id="chat" class="hidden"><div class="card"><h2>💬 Chat</h2><div id="chatMessages"><p class="small">Cargando conversación...</p></div><br><input id="chatText" placeholder="Escribe un mensaje..."><button class="btn" onclick="sendMessage()">ENVIAR</button></div></section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
