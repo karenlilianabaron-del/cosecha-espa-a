@@ -22,7 +22,7 @@ input,select,textarea{width:100%;padding:11px;border:1px solid #d4ded8;border-ra
 <nav>
 <button class="tab active" onclick="view('home',this)">Inicio</button>
 <button id="navSearch" class="tab" onclick="view('search',this)">Buscar</button>
-<button id="navProfile" class="tab" onclick="view('profile',this)">Perfil</button>
+<button id="navProfile" class="tab" onclick="view('profile',this);loadProfile()">Perfil</button>
 <button id="navPublish" class="tab" onclick="view('publish',this)">Publicar</button>
 <button id="navApplications" class="tab" onclick="view('apps',this);loadApplications()">Mis postulaciones</button>
 <button id="navCandidates" class="tab" onclick="view('candidates',this);loadCandidatesV2()">Candidatos</button>
@@ -107,6 +107,7 @@ async function changePassword(){if(!client)return alert('Configura Supabase prim
 async function logout(){if(client)await client.auth.signOut();alert('Sesión cerrada');location.reload();}
 async function me(){if(!client)return null;const {data:{user}}=await client.auth.getUser();return user}
 async function saveProfile(){let u=await me();if(!u)return alert('Inicia sesión primero.');const {error}=await client.from('profiles').update({full_name:document.getElementById('name').value,crops:pcrops.value.split(',').map(x=>x.trim()).filter(Boolean),availability_start:from.value||null,availability_end:to.value||null,has_vehicle:vehicle.checked,needs_accommodation:needhouse.checked,updated_at:new Date().toISOString()}).eq('id',u.id);alert('ID usuario: '+u.id);console.log('Resultado guardado:',error);alert(error?'ERROR: '+error.message:'Perfil guardado online. Revisa Supabase.')}  
+async function loadProfile(){let u=await me();if(!u)return;const {data:p,error}=await client.from('profiles').select('full_name,crops,availability_start,availability_end,has_vehicle,needs_accommodation').eq('id',u.id).single();if(error)return alert('Error al cargar perfil: '+error.message);document.getElementById('name').value=p.full_name||'';document.getElementById('pcrops').value=(p.crops||[]).join(', ');document.getElementById('from').value=p.availability_start||'';document.getElementById('to').value=p.availability_end||'';document.getElementById('vehicle').checked=!!p.has_vehicle;document.getElementById('needhouse').checked=!!p.needs_accommodation;}
   console.log("Nombre leído:", name.value);
   console.log("Prueba Cosecha España");
 async function loadCampaigns(){if(!client){document.getElementById('campaigns').innerHTML='<div class="campaign">Modo demo: configura Supabase para cargar campañas reales.</div>';return}
