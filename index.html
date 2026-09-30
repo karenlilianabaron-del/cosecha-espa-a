@@ -16,7 +16,7 @@ input,select,textarea{width:100%;padding:11px;border:1px solid #d4ded8;border-ra
 @media(max-width:700px){.grid{grid-template-columns:1fr}}
 </style></head>
 <body>
-<header><div style="display:flex;justify-content:space-between;align-items:center;gap:15px"><h1>🌱 COSECHA ESPAÑA</h1><button id="notificationBell" onclick="openNotifications()" style="position:relative;border:0;background:transparent;font-size:28px;cursor:pointer;padding:8px" aria-label="Notificaciones">🔔<span id="notificationCount" style="display:none;position:absolute;top:0;right:0;background:#d32f2f;color:white;border-radius:50%;min-width:19px;height:19px;line-height:19px;font-size:11px;font-weight:bold;text-align:center">0</span></button></div><p>Encuentra tu próxima campaña. Trabaja donde haya cosecha.</p></header>
+<header><div style="display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap"><h1>🌱 COSECHA ESPAÑA</h1><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><button id="loginTopButton" class="btn" onclick="view('auth',this);showLogin()">INICIAR SESIÓN</button><button id="signupTopButton" class="btn alt" onclick="view('auth',this);showSignup()">CREAR CUENTA</button><button id="topLogoutButton" class="btn" onclick="logout()" style="display:none">CERRAR SESIÓN</button><button id="notificationBell" onclick="openNotifications()" style="position:relative;border:0;background:transparent;font-size:28px;cursor:pointer;padding:8px" aria-label="Notificaciones">🔔<span id="notificationCount" style="display:none;position:absolute;top:0;right:0;background:#d32f2f;color:white;border-radius:50%;min-width:19px;height:19px;line-height:19px;font-size:11px;font-weight:bold;text-align:center">0</span></button></div></div><p>Encuentra tu próxima campaña. Trabaja donde haya cosecha.</p></header>
 <main>
 <div class="card"><span id="status">Modo demo</span></div>
 <nav>
@@ -29,9 +29,7 @@ input,select,textarea{width:100%;padding:11px;border:1px solid #d4ded8;border-ra
 <button id="navChat" class="tab" onclick="view('chat',this)">Chat</button>
 <button id="navAdmin" class="tab" style="display:none" onclick="view('admin',this);loadAdminVerifications()">Administración</button>
 </nav>
-<button id="loginTopButton" class="btn" onclick="view('auth',this);showLogin()">INICIAR SESIÓN</button>
-<button id="signupTopButton" class="btn alt" onclick="view('auth',this);showSignup()">CREAR CUENTA</button>
-<button id="topLogoutButton" class="btn" onclick="logout()" style="display:none">CERRAR SESIÓN</button>
+
 <section id="home"><div class="card"><h2>Bienvenida</h2><p>0.9 añade conexión preparada con Supabase Auth y PostgreSQL. Sin configuración de credenciales, la app continúa en modo demo.</p><button class="btn alt" onclick="view('search',document.querySelectorAll('.tab')[1])">BUSCAR CAMPAÑAS</button></div></section>
 
 <p id="authMessage" class="small">Crea tu cuenta o inicia sesión para acceder a Cosecha España.</p>
