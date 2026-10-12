@@ -96,7 +96,7 @@ input,select,textarea{width:100%;padding:11px;border:1px solid #d4ded8;border-ra
 <div style="margin-top:18px;padding:16px;background:#f4f8f5;border-radius:12px"><h3>👷 Disponibilidad y contratación</h3><div class="grid"><input id="workers" type="number" min="1" placeholder="Trabajadores necesarios"><input id="salary" placeholder="Salario/condiciones"></div><label style="display:block;margin:12px 0"><input id="unlimitedWorkers" type="checkbox" style="width:auto" onchange="workers.disabled=this.checked;if(this.checked)workers.value=''"> Sin límite de trabajadores</label><p>¿Aceptas trabajadores que solo puedan trabajar durante una parte de la campaña?</p><label style="display:block;margin:12px 0"><input id="acceptsPartialPeriods" type="checkbox" style="width:auto"> Sí, aceptamos trabajadores por períodos parciales</label><p class="small">Si no marcas esta opción, se entenderá que necesitas trabajadores durante toda la campaña.</p></div>
 <textarea id="description" placeholder="Descripción y requisitos"></textarea>
 <button id="publishCampaignButton" class="btn alt" onclick="createCampaign()">PUBLICAR ONLINE</button></div></section>
-
+<div id="applicationModal" style="display:none"></div>
 <section id="apps" class="hidden"><div class="card"><h2>Mis postulaciones</h2><div id="applications"></div></div></section>
 <section id="candidates" class="hidden"><div class="card"><h2>Candidatos recibidos</h2><div id="candidatesList"></div></div></section>
 <section id="workerProfileView" class="hidden"><div class="card"><h2>👤 Perfil del trabajador</h2><div id="workerProfileContent"></div><br><button class="btn alt" onclick="view('candidates',this);loadCandidatesV2()">VOLVER A CANDIDATOS</button></div></section>
